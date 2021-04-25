@@ -1,9 +1,11 @@
 
 let fs = require("fs");
 let zlib = require("zlib");
-let Canvas = require("canvas");
+let path = require("path");
 
+let Canvas = require("canvas");
 let MapUtils = require("./MapUtils");
+
 
 /**
  * 初始化地图信息
@@ -45,7 +47,7 @@ let _canvasInfo = {};
 let readDir = function (dir) {
 
     if (fs.statSync(dir).isFile()) {
-
+        return;
     }
 
     /** 读取文件目录 */
@@ -104,7 +106,7 @@ let draw = function () {
             let canvas = Canvas.createCanvas(MapUtils.getSplitWidth(), MapUtils.getSplitHeight());
             let context = canvas.getContext("2d");
 
-            let writeStream = fs.createWriteStream(tempDir);
+            let writeStream = fs.createWriteStream(path.join(tempDir));
             let pngStream = canvas.createPNGStream();
 
             pngStream.on("data", (chunk) => {
@@ -112,7 +114,7 @@ let draw = function () {
             });
 
             pngStream.on("close", () => {
-                console.log("close。" + "dir = " + tempDir);
+                console.log("close。" + "dir = " + path.join(tempDir));
                 delete _canvasInfo[tempDir];
                 temp = setInterval(() => {
                     clearInterval(temp)
